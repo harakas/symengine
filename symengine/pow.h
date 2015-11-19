@@ -40,7 +40,7 @@ public:
     inline RCP<const Basic> get_exp() const { return exp_; }
     //! Differentiate w.r.t Symbol `x`
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual vec_basic get_args() const;
 
@@ -88,7 +88,7 @@ public:
     virtual vec_basic get_args() const { return {arg_}; }
     //! Differentiate w.r.t Symbol `x`
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual void accept(Visitor &v) const;
 };

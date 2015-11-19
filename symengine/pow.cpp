@@ -412,18 +412,18 @@ RCP<const Basic> Pow::diff(const RCP<const Symbol> &x) const
         return mul(pow(base_, exp_), mul(exp_, log(base_))->diff(x));
 }
 
-RCP<const Basic> Pow::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Pow::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Pow> self = rcp_from_this_cast<const Pow>();
     auto it = subs_dict.find(self);
     if (it != subs_dict.end())
         return it->second;
-    RCP<const Basic> base_new = base_->subs(subs_dict);
-    RCP<const Basic> exp_new = exp_->subs(subs_dict);
+    RCP<const Basic> base_new = base_->subs(subs_dict, options);
+    RCP<const Basic> exp_new = exp_->subs(subs_dict, options);
     if (base_new == base_ and exp_new == exp_)
         return self;
     else
-        return pow(base_new, exp_new);
+        return subs_return(pow(base_new, exp_new), subs_dict, options);
 }
 
 vec_basic Pow::get_args() const {
@@ -487,17 +487,17 @@ int Log::compare(const Basic &o) const
     return arg_->__cmp__(*s.get_arg());
 }
 
-RCP<const Basic> Log::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Log::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Log> self = rcp_from_this_cast<const Log>();
     auto it = subs_dict.find(self);
     if (it != subs_dict.end())
         return it->second;
-    RCP<const Basic> arg_new = arg_->subs(subs_dict);
+    RCP<const Basic> arg_new = arg_->subs(subs_dict, options);
     if (arg_new == arg_) {
         return self;
     } else {
-        return log(arg_new);
+        return subs_return(log(arg_new), subs_dict, options);
     }
 }
 

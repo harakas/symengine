@@ -31,7 +31,7 @@ public:
     //! Method to construct classes with canonicalization
     virtual RCP<const Basic> create(const RCP<const Basic> &arg) const;
     //! Substitute with `subs_dict`
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 };
 
 /*! \return `true` if `arg` is of form `theta + n*pi/12`
@@ -540,7 +540,7 @@ public:
     bool is_canonical(const vec_basic &arg);
     //! Differentiate w.r.t Symbol `x`
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual void accept(Visitor &v) const;
     virtual RCP<const Basic> create(const vec_basic &x) const;
@@ -608,7 +608,7 @@ public:
     }
     bool is_canonical(const RCP<const Basic> &arg, const vec_basic &x) const;
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual void accept(Visitor &v) const;
 };
@@ -643,7 +643,7 @@ public:
 
     bool is_canonical(const RCP<const Basic> &arg, const map_basic_basic &x) const;
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual void accept(Visitor &v) const;
 };
@@ -665,7 +665,7 @@ public:
     //! Method to construct classes with canonicalization
     virtual RCP<const Basic> create(const RCP<const Basic> &arg) const;
     //! Substitute with `subs_dict`
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 };
 
 class Sinh : public HyperbolicFunction {

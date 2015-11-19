@@ -58,7 +58,7 @@ public:
             const map_basic_basic& dict);
     //! Differentiate w.r.t Symbol `x`
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options) const;
 
     virtual vec_basic get_args() const;
 

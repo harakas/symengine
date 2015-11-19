@@ -345,7 +345,7 @@ void Add::as_two_terms(const Ptr<RCP<const Basic>> &a,
     *b = Add::from_dict(coef_, std::move(d));
 }
 
-RCP<const Basic> Add::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Add::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Add> self = rcp_from_this_cast<const Add>();
     auto it = subs_dict.find(self);
@@ -370,14 +370,14 @@ RCP<const Basic> Add::subs(const map_basic_basic &subs_dict) const
         } else {
             it = subs_dict.find(p.second);
             if (it != subs_dict.end()) {
-                coef_dict_add_term(outArg(coef), d, one, mul(it->second, p.first->subs(subs_dict)));
+                coef_dict_add_term(outArg(coef), d, one, mul(it->second, p.first->subs(subs_dict, options)));
             } else {
-                coef_dict_add_term(outArg(coef), d, p.second, p.first->subs(subs_dict));
+                coef_dict_add_term(outArg(coef), d, p.second, p.first->subs(subs_dict, options));
             }
         }
     }
 
-    return Add::from_dict(coef, std::move(d));
+    return subs_return(Add::from_dict(coef, std::move(d)), subs_dict, options);
 }
 
 vec_basic Add::get_args() const {

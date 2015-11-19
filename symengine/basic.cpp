@@ -42,7 +42,7 @@ RCP<const Basic> expand(const RCP<const Basic> &self)
     return self;
 }
 
-RCP<const Basic> Basic::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Basic::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Basic> self = rcp_from_this();
     auto it = subs_dict.find(self);

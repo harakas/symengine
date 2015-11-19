@@ -574,7 +574,7 @@ RCP<const Basic> Mul::diff(const RCP<const Symbol> &x) const
     return Add::from_dict(overall_coef, std::move(add_dict));
 }
 
-RCP<const Basic> Mul::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Mul::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Mul> self = rcp_from_this_cast<const Mul>();
     auto it = subs_dict.find(self);
@@ -585,7 +585,7 @@ RCP<const Basic> Mul::subs(const map_basic_basic &subs_dict) const
     map_basic_basic d;
     for (const auto &p: dict_) {
         RCP<const Basic> factor_old = pow(p.first, p.second);
-        RCP<const Basic> factor = factor_old->subs(subs_dict);
+        RCP<const Basic> factor = factor_old->subs(subs_dict, options);
         if (factor == factor_old) {
             Mul::dict_add_term_new(outArg(coef), d, p.second, p.first);
         } else if (is_a_Number(*factor)) {
@@ -605,7 +605,7 @@ RCP<const Basic> Mul::subs(const map_basic_basic &subs_dict) const
             Mul::dict_add_term_new(outArg(coef), d, exp, t);
         }
     }
-    return Mul::from_dict(coef, std::move(d));
+    return subs_return(Mul::from_dict(coef, std::move(d)), subs_dict, options);
 }
 
 vec_basic Mul::get_args() const {

@@ -142,8 +142,22 @@ public:
     //! Returns the derivative of self
     virtual RCP<const Basic> diff(const RCP<const Symbol> &x) const;
 
+    struct subs_options
+    {
+      subs_options() { }
+
+      bool recursive = false;
+    };
+
     //! Substitutes 'subs_dict' into 'self'.
-    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict) const;
+    virtual RCP<const Basic> subs(const map_basic_basic &subs_dict, const subs_options& options = subs_options()) const;
+
+    RCP<const Basic> subs_recursive(const map_basic_basic &subs_dict) const
+    {
+      subs_options options;
+      options.recursive = true;
+      return subs(subs_dict, options);
+    }
 
     //! expands the special function in terms of exp function
     virtual RCP<const Basic> expand_as_exp() const {
@@ -154,6 +168,9 @@ public:
     virtual vec_basic get_args() const = 0;
 
     virtual void accept(Visitor &v) const = 0;
+
+protected:
+    static inline RCP<const Basic> subs_return(RCP<const Basic>&& obj, const map_basic_basic& subs_dict, const Basic::subs_options& options);
 };
 
 //! Our hash:
@@ -191,6 +208,19 @@ struct RCPBasicKeyLessCmp {
         return x->__cmp__(*y) == -1;
     }
 };
+
+inline RCP<const Basic> Basic::subs_return(RCP<const Basic>&& obj, const map_basic_basic& subs_dict, const Basic::subs_options& options)
+{
+  if (options.recursive) {
+      auto it = subs_dict.find(obj);
+      if (it == subs_dict.end())
+          return obj;
+      else
+          return it->second;
+  } else {
+      return obj;
+  }
+}
 
 // Convenience functions
 //! Checks equality for `a` and `b`

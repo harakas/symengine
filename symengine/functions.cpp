@@ -271,16 +271,16 @@ RCP<const Basic> TrigFunction::create(const RCP<const Basic> &arg) const
     throw std::runtime_error("Should be implemented by the inherited class");
 }
 
-RCP<const Basic> TrigFunction::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> TrigFunction::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     auto it = subs_dict.find(rcp_from_this());
     if (it != subs_dict.end())
         return it->second;
-    RCP<const Basic> arg = arg_->subs(subs_dict);
+    RCP<const Basic> arg = arg_->subs(subs_dict, options);
     if (arg == arg_)
         return rcp_from_this();
     else
-        return this->create(arg);
+        return subs_return(this->create(arg), subs_dict, options);
 }
 
 Sin::Sin(const RCP<const Basic> &arg)
@@ -1479,16 +1479,16 @@ RCP<const Basic> FunctionSymbol::create(const vec_basic &x) const {
     return make_rcp<const FunctionSymbol>(name_, x);
 }
 
-RCP<const Basic> FunctionSymbol::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> FunctionSymbol::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     auto it = subs_dict.find(rcp_from_this());
     if (it != subs_dict.end())
         return it->second;
     vec_basic v = arg_;
     for (unsigned i = 0; i < v.size(); i++) {
-        v[i] = v[i]->subs(subs_dict);
+        v[i] = v[i]->subs(subs_dict, options);
     }
-    return create(v);
+    return subs_return(create(v), subs_dict, options);
 }
 
 RCP<const Basic> function_symbol(std::string name, const vec_basic &arg)
@@ -1594,7 +1594,7 @@ RCP<const Basic> Derivative::diff(const RCP<const Symbol> &x) const
     return Derivative::create(arg_, t);
 }
 
-RCP<const Basic> Derivative::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Derivative::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     RCP<const Symbol> s;
     map_basic_basic m, n;
@@ -1638,9 +1638,9 @@ RCP<const Basic> Derivative::subs(const map_basic_basic &subs_dict) const
         sym[i] = sym[i]->subs(n);
     }
     if (m.empty()) {
-        return Derivative::create(arg_->subs(n), sym);
+        return subs_return(Derivative::create(arg_->subs(n), sym), subs_dict, options);
     } else {
-         return make_rcp<const Subs>(Derivative::create(arg_->subs(n), sym), m);
+         return subs_return(make_rcp<const Subs>(Derivative::create(arg_->subs(n), sym), m), subs_dict, options);
     }
 }
 
@@ -1736,7 +1736,7 @@ RCP<const Basic> Subs::diff(const RCP<const Symbol> &x) const
     return diff;
 }
 
-RCP<const Basic> Subs::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> Subs::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     auto it = subs_dict.find(rcp_from_this());
     if (it != subs_dict.end())
@@ -1757,9 +1757,9 @@ RCP<const Basic> Subs::subs(const map_basic_basic &subs_dict) const
         }
     }
     for (const auto &s: dict_) {
-        insert(m, s.first, s.second->subs(subs_dict));
+        insert(m, s.first, s.second->subs(subs_dict, options));
     }
-    return make_rcp<const Subs>(arg_->subs(n), m);
+    return subs_return(make_rcp<const Subs>(arg_->subs(n), m), subs_dict, options);
 }
 
 std::size_t HyperbolicFunction::__hash__() const
@@ -1774,16 +1774,16 @@ RCP<const Basic> HyperbolicFunction::create(const RCP<const Basic> &arg) const
     throw std::runtime_error("Should be implemented by the inherited class");
 }
 
-RCP<const Basic> HyperbolicFunction::subs(const map_basic_basic &subs_dict) const
+RCP<const Basic> HyperbolicFunction::subs(const map_basic_basic &subs_dict, const subs_options& options) const
 {
     auto it = subs_dict.find(rcp_from_this());
     if (it != subs_dict.end())
         return it->second;
-    RCP<const Basic> arg = arg_->subs(subs_dict);
+    RCP<const Basic> arg = arg_->subs(subs_dict, options);
     if (arg == arg_)
         return rcp_from_this();
     else
-        return this->create(arg);
+        return subs_return(this->create(arg), subs_dict, options);
 }
 
 Sinh::Sinh(const RCP<const Basic> &arg)
